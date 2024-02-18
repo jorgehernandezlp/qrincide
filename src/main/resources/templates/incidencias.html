@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Incidencias - QRInside</title>
+    <link th:href="@{/bootstrap/4.3.1/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/styles/home.css}" rel="stylesheet">
+    <link th:src="@{/js/incidencias.js}" rel="stylesheet">
+</head>
+<body>
+    <div th:replace="~{fragments/menu :: navbar}"></div>
+    
+    <div class="container mt-5">
+        <h2 class="text-center">Gestión de Incidencias</h2>
+        <table class="table mt-3">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Descripción</th>
+                    <th>Estado</th>
+                    <th>Prioridad</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Incidencia 1 -->
+                <tr>
+                    <td>1</td>
+                    <td>Error de Sistema</td>
+                    <td>Falla en el módulo de login</td>
+                    <td>Pendiente</td>
+                    <td>Alta</td>
+                    <td><button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editarIncidenciaModal" data-id="1">Acciones</button></tr>
+
+                </tr>
+                <!-- Incidencia 2 -->
+                <tr>
+                    <td>2</td>
+                    <td>Problema de Red</td>
+                    <td>Conexión intermitente en el edificio A</td>
+                    <td>En Curso</td>
+                    <td>Media</td>
+                    <td><button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editarIncidenciaModal" data-id="2">Acciones</button></tr>
+                </tr>
+                <!-- Incidencia 3 -->
+                <tr>
+                    <td>3</td>
+                    <td>Actualización de Software</td>
+                    <td>Se requiere actualizar el CRM a la última versión</td>
+                    <td>Pendiente</td>
+                    <td>Baja</td>
+                    <td><button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editarIncidenciaModal" data-id="3">Acciones</button></tr>
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <script src="./js/jquery-3.6.1.min.js"></script>
+    <script src="./bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+    <!-- Modal para Editar Incidencia -->
+<div class="modal fade" id="editarIncidenciaModal" tabindex="-1" role="dialog" aria-labelledby="editarIncidenciaModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editarIncidenciaModalLabel">Editar Incidencia</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Formulario para editar la incidencia -->
+        <form id="formEditarIncidencia">
+          <div class="form-group">
+            <label for="incidenciaId">ID</label>
+            <input type="text" class="form-control" id="incidenciaId" name="id" disabled>
+          </div>
+          <div class="form-group">
+            <label for="editarTitulo">Título</label>
+            <input type="text" class="form-control" id="editarTitulo" name="titulo">
+          </div>
+          <div class="form-group">
+            <label for="editarDescripcion">Descripción</label>
+            <textarea class="form-control" id="editarDescripcion" name="descripcion"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="editarEstado">Estado</label>
+            <select class="form-control" id="editarEstado" name="estado">
+              <option>Pendiente</option>
+              <option>En Curso</option>
+              <option>Resuelta</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="editarPrioridad">Prioridad</label>
+            <select class="form-control" id="editarPrioridad" name="prioridad">
+              <option>Baja</option>
+              <option>Media</option>
+              <option>Alta</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" id="guardarCambios">Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

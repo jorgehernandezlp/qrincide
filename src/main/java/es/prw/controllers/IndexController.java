@@ -41,8 +41,13 @@ public class IndexController {
 			
 			MySqlConnection objMySqlConnection = new MySqlConnection();
 			objMySqlConnection.open();	
-		
+			
+			String nombreUsuario = authentication.getName();
+			model.addAttribute("nombreUsuario", nombreUsuario);
+			System.out.println(nombreUsuario);			
 		}			
+		
+					
 					
 		return "home";		
 	}
@@ -69,4 +74,9 @@ public class IndexController {
 		}
 		return "login";		
 	}
+	
+	 @GetMapping("/incidencias")
+	    public String gestionIncidencias() {
+	        return "incidencias"; 
+	    }
 }

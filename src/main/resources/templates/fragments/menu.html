@@ -1,0 +1,26 @@
+<!-- src/main/resources/templates/fragments/menu.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark" th:fragment="navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">QRInside</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav mx-auto">
+                    <a class="nav-link active" aria-current="page" th:href="@{/index}">Inicio</a>
+                    <a class="nav-link" href="#" data-toggle="modal" data-target="#nuevaIncidenciaModal">Nueva Incidencia</a>
+                    <a class="nav-link" th:href="@{/incidencias}">Gestión de incidencias</a>
+                    <a class="nav-link" href="#">Gestión de usuarios</a>
+                    <a class="nav-link" href="#">Gestión de equipos</a>
+                    <form th:action="@{/logout}" method="POST" id="logoutForm">
+                        <a href="#" onclick="document.getElementById('logoutForm').submit();" class="nav-link">Salir</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+</body>
+</html>
