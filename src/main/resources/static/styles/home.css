@@ -1,0 +1,76 @@
+/*
+*
+* ==========================================
+* CUSTOM UTIL CLASSES
+* ==========================================
+*
+*/
+
+/* Estilos básicos */
+body {
+    background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
+}
+
+/* Navegación */
+.navbar {
+    background-color: #343a40;
+    padding: 0.5rem 1rem;
+}
+
+.navbar .navbar-brand, .navbar .nav-link {
+    color: #ffffff;
+}
+
+.navbar .nav-link {
+    margin-right: 1rem;
+}
+
+.navbar .navbar-nav .nav-link:hover, .navbar .navbar-nav .nav-link:focus {
+    color: #f58220 !important;
+}
+
+/* Contenedor principal */
+.container {
+    padding: 2rem;
+    margin-top: 1rem;
+}
+
+/* Tabla de incidencias */
+.table {
+    background-color: #ffffff;
+    margin-top: 1rem;
+}
+
+.table thead th {
+    background-color: #343a40;
+    color: #ffffff;
+}
+
+.table td, .table th {
+    padding: 0.75rem;
+    border-top: 1px solid #dee2e6;
+}
+
+/* Botones */
+.btn-primary {
+    background-color: #343a40;
+    border-color: #343a40;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: #f58220; /* Cambio a naranja al pasar el mouse o enfocar */
+    border-color: #f58220;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+    }
+
+    .navbar .nav-link {
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+    }
+}

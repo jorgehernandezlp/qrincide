@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Incidencias</title>
+    <link th:href="@{/styles/home.css}" rel="stylesheet">
+    <link th:href="@{/bootstrap/4.3.1/css/bootstrap.min.css}" rel="stylesheet">
+    <script src="./js/jquery-3.6.1.min.js"></script>
+    <script src="./bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+    <script src="./js/home.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">QRInside</a>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav mx-auto">
+                <a class="nav-link active" aria-current="page" href="#">Inicio</a>
+                <a class="nav-link" href="#">Nueva Incidencia</a>
+                <a class="nav-link" href="#">Listar Incidencias</a>
+                <a class="nav-link" href="#">Configuración</a>
+                <!-- Suponiendo que este enlace realiza una acción de cerrar sesión -->
+                <form th:action="@{/logout}" method="POST" id="logoutForm">
+		  			<a href="#" onclick="document.getElementById('logoutForm').submit();" class="nav-link">
+            			Salir          
+          			</a>
+          		</form>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <h2>Registro de Incidencias</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Descripción</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="color: #f58220;">#1</td>
+                <td>Error en el sistema de facturación</td>
+                <td><span class="badge bg-warning text-dark">Pendiente</span></td>
+                <td>
+                    <button class="btn btn-primary btn-sm">Ver Detalles</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

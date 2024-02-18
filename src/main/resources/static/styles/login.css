@@ -1,0 +1,38 @@
+body, html {
+    height: 100%;
+    background-color: #000; /* Fondo negro */
+}
+
+.sidenav {    
+    background-color: #f58220; /* Naranja característico */
+    overflow-x: hidden;
+    padding-top: 20px;
+}
+
+.login-main-text {
+    margin-top: 20%;
+    padding: 60px;
+    color: #fff; /* Texto blanco */
+}
+
+
+
+.btn-dark {
+    background-color: #000; /* Botón negro */
+    color: #fff; /* Texto blanco */
+}
+
+.btn-secondary {
+    background-color: #f58220; /* Botón naranja */
+    color: #fff; /* Texto blanco */
+}
+
+.form-control {
+    background-color: #333; /* Fondo ligeramente más claro que el negro para los inputs */
+    color: #fff; /* Texto blanco */
+    border-color: #f58220; /* Borde naranja */
+}
+
+.form-group label {
+    color: #fff; /* Texto blanco */
+}
