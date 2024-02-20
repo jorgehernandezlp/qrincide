@@ -13,7 +13,7 @@
                     <a class="nav-link active" aria-current="page" th:href="@{/index}">Inicio</a>
                     <a class="nav-link" href="#" data-toggle="modal" data-target="#nuevaIncidenciaModal">Nueva Incidencia</a>
                     <a class="nav-link" th:href="@{/incidencias}">Gestión de incidencias</a>
-                    <a class="nav-link" href="#">Gestión de usuarios</a>
+                    <a class="nav-link" th:href="@{/usuarios}">Gestión de usuarios</a>
                     <a class="nav-link" href="#">Gestión de equipos</a>
                     <form th:action="@{/logout}" method="POST" id="logoutForm">
                         <a href="#" onclick="document.getElementById('logoutForm').submit();" class="nav-link">Salir</a>

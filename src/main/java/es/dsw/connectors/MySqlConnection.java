@@ -7,6 +7,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+
 //[2] - CONSTRUCCIÓN DE LA CLASE CONECTORA
 
 /*####################################################################################
@@ -21,6 +26,12 @@ import java.sql.Statement;
  */
 
 public class MySqlConnection {
+	
+	@Autowired
+    public MySqlConnection(DataSource dataSource) {
+        new JdbcTemplate(dataSource);
+    }
+
 	
 	//Aunque en este ejemplo los datos de conexión están en código, siempre es recomendable que esta
 	//parametrización figure en un fichero de propiedades.
