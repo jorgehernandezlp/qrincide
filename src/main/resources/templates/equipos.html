@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title>Gestión de Equipos</title>
+    <link th:href="@{/styles/home.css}" rel="stylesheet">
+    <link th:href="@{/bootstrap/4.3.1/css/bootstrap.min.css}" rel="stylesheet">
+    <script src="./js/jquery-3.6.1.min.js"></script>
+    <script src="./bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+    <script src="./js/equipos.js"></script> <!-- Asume que tienes un archivo equipos.js para la lógica específica de esta página -->
+</head>
+
+<body>
+    <div th:replace="~{fragments/menu :: navbar}"></div>
+    <div class="container mt-5">
+        <h1 class="text-center">Gestión de Equipos</h1>
+        <button type="button" class="btn btn-primary my-3" data-toggle="modal" data-target="#equipoModal">Agregar Equipo</button>
+        <input type="text" id="buscarEquipo" onkeyup="buscarEquipo()" placeholder="Buscar equipo por nombre...">
+        <table class="table" id="tablaEquipos">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>Descripción</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Iterar sobre la lista de equipos y mostrar los datos -->
+                <tr th:each="equipo : ${equipos}">
+                    <td th:text="${equipo.idEquipo}">ID</td>
+                    <td th:text="${equipo.marca}">Marca</td>
+                    <td th:text="${equipo.modelo}">Modelo</td>
+                    <td th:text="${equipo.descripcion}">Descripción</td>
+                    <td>
+                        <button type="button" class="btn btn-warning btn-sm" th:attr="data-toggle='modal', data-target='#equipoModal', onclick=|cargarEquipo('${equipo.idEquipo}');|">
+                            Editar
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm" th:attr="onclick=|mostrarConfirmacionBorrado('${equipo.idEquipo}');|">
+                            <span aria-hidden="true">&times;</span> Eliminar
+                        </button>
+                        <button type="button" class="btn btn-info btn-sm" th:data-id="${equipo.idEquipo}" onclick="mostrarModalQR(this.getAttribute('data-id'))">
+                    		<img th:src="@{/img/codigo-qr.png}" alt="QR" style="width: 20px;"> 
+                		</button>							
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+         <!-- Modal para Agregar/Editar Equipo -->
+    <div class="modal fade" id="equipoModal" tabindex="-1" aria-labelledby="equipoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document"> <!-- modal-lg para un modal más grande -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="equipoModalLabel">Gestionar Equipo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Formulario para nuevo/editar equipo -->
+                    <form id="formEquipo" th:action="@{/agregarEquipo}" method="post" class="needs-validation" novalidate>
+                        <div class="form-row">                                               
+                        </div>
+                        <div class="form-row">
+                            <div class="col-md-4 mb-3">
+                                <label for="equipoTipo">Tipo</label>
+                                <input type="text" class="form-control" id="equipoTipo" name="tipo" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="equipoMarca">Marca</label>
+                                <input type="text" class="form-control" id="equipoMarca" name="marca" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="equipoModelo">Modelo</label>
+                                <input type="text" class="form-control" id="equipoModelo" name="modelo" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="equipoDescripcion">Descripción</label>
+                            <textarea class="form-control" id="equipoDescripcion" name="descripcion" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="equipoUbicacion">Ubicación</label>
+                            <input type="text" class="form-control" id="equipoUbicacion" name="ubicacion" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Guardar Equipo</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+        <!-- Modal de confirmación de borrado -->
+        <div class="modal fade" id="confirmacionBorradoModal" tabindex="-1" aria-labelledby="confirmacionBorradoModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmacionBorradoModalLabel">Confirmar Borrado</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Estás seguro de que deseas borrar este equipo?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger" id="confirmarBorradoBtn">Borrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

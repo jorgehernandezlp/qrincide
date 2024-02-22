@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import es.dsw.connectors.MySqlConnection;
+import es.prw.models.Equipo;
 import es.prw.models.Usuario;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -122,21 +123,95 @@ public class IndexController {
 	        String sql = "INSERT INTO Usuarios (nombre, contraseña, email, rol) VALUES ('" + nombre + "', '" + contraseña + "', '" + email + "', '" + rol + "')";
 	        System.out.println(sql);
 	        ResultSet rs = objMySqlConnection.executeInsert(sql);
-	        if (rs != null) {
-	            // Operación exitosa
-	        	redirectAttributes.addFlashAttribute("mensaje", "Usuario agregado correctamente.");
-	            return "redirect:/usuarios"; // Redirige a la página de usuarios
-	        } else {
-	            // Error en la operación
-	        	redirectAttributes.addFlashAttribute("error", "Error al agregar el usuario. Inténtelo de nuevo.");
-	        	return "redirect:/usuarios"; // Página de gestión de usuarios
+	        try {
+		        if (rs != null) {
+		            // Operación exitosa
+		        	redirectAttributes.addFlashAttribute("mensaje", "Usuario agregado correctamente.");
+		            return "redirect:/usuarios"; // Redirige a la página de usuarios
+		        } else {
+		            // Error en la operación
+		        	redirectAttributes.addFlashAttribute("error", "Error al agregar el usuario. Inténtelo de nuevo.");
+		        }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        } finally {
+	            objMySqlConnection.close();
 	        }
+	        	return "redirect:/usuarios"; // Página de gestión de usuarios
+	        
 	    }
 	    
-	    @GetMapping("/borrarUsuario")
+	    @PostMapping("/borrarUsuario")
 	    public String borrarUsuario(@RequestParam("idUsuario") String idUsuario) {
-	    	System.out.println("Borrar usuario" +idUsuario);
+	        int idUsuarioInt = Integer.parseInt(idUsuario);
+	        System.out.println("Borrar usuario " + idUsuarioInt);
+
+	        MySqlConnection objMySqlConnection = new MySqlConnection();
+	        objMySqlConnection.open();       
+
+	        try {
+	            int numRowsAffected = objMySqlConnection.deleteUserById(idUsuarioInt);
+	            System.out.println("Número de usuarios borrados: " + numRowsAffected);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        } finally {
+	            objMySqlConnection.close();
+	        }
+
 	        return "redirect:/usuarios"; // Redirige a la página de usuarios después del borrado
 	    }
+	    
+	    @GetMapping("/equipos")
+	    public String gestionEquipos(Model model) {
+	        System.out.println("Dentro de gestionEquipos");
+	        MySqlConnection objMySqlConnection = new MySqlConnection();
+	        objMySqlConnection.open();
 
-}
+	        List<Equipo> listaEquipos = new ArrayList<>();
+	        try {	            
+	            ResultSet rs = objMySqlConnection.executeSelect("SELECT * FROM Equipos;");
+	            while (rs != null && rs.next()) {
+	                Equipo equipo = new Equipo(rs);
+	                listaEquipos.add(equipo);
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        } finally {
+	            objMySqlConnection.close();
+	        }
+
+	        model.addAttribute("equipos", listaEquipos);
+	        return "equipos"; // Asegúrate de que este es el nombre correcto de tu plantilla Thymeleaf
+	    }
+	    
+	    @PostMapping(value= "/agregarEquipo")
+	    public String agregarEquipo(@RequestParam("tipo") String tipo,
+	                                @RequestParam("marca") String marca,
+	                                @RequestParam("modelo") String modelo,
+	                                @RequestParam("descripcion") String descripcion,	                                
+	                                Model model, RedirectAttributes redirectAttributes) {
+	        System.out.println("Agregar equipo");
+	        MySqlConnection objMySqlConnection = new MySqlConnection();
+	        objMySqlConnection.open();	        
+	        String sql = "INSERT INTO equipos (tipo, marca, modelo, descripción) VALUES ('" + tipo + "', '" + marca + "', '" + modelo + "', '" + descripcion + "')";
+	        System.out.println(sql);
+	        ResultSet rs = objMySqlConnection.executeInsert(sql);
+	        try {
+		        if (rs != null) {
+		            // Operación exitosa
+		        	redirectAttributes.addFlashAttribute("mensaje", "Equipo agregado correctamente.");
+		            return "redirect:/equipos"; // Redirige a la página de usuarios
+		        } else {
+		            // Error en la operación
+		        	redirectAttributes.addFlashAttribute("error", "Error al agregar el equipo. Inténtelo de nuevo.");
+		        }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        } finally {
+	            objMySqlConnection.close();
+	        }
+	        return "redirect:/equipos"; // Redirige a la página de gestión de equipos
+	    }
+	}
+
+

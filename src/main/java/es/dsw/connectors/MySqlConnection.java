@@ -333,5 +333,41 @@ public class MySqlConnection {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+	
+	// Método para borrar un usuario de la base de datos por su ID. Devuelve el número de registros afectados.
+	public int deleteUserById(int idUsuario) {
+	    int numRowsAffected = 0;
+	    try {
+	        this._initializeError();
+	        if (this.connection != null && !this.connection.isClosed()) {
+	            // Definir la sentencia SQL de borrado
+	            String sqlDeleteUser = "DELETE FROM usuarios WHERE id_usuario = ?";
+	            
+	            // Preparar la sentencia con el SQL
+	            PreparedStatement statement = this.connection.prepareStatement(sqlDeleteUser);
+	            // Establecer el idUsuario en la sentencia preparada
+	            statement.setInt(1, idUsuario);
+
+	            // Ejecutar la actualización
+	            numRowsAffected = statement.executeUpdate();
+	        } else {
+	            this.flagError = true;
+	            this.msgError = "Error en deleteUserById. +Info: Conexión no disponible.";
+	        }
+	    } catch (SQLException ex) {
+	        this.flagError = true;
+	        this.msgError = "Error en deleteUserById. +Info: " + ex.getMessage();
+	        try {
+	            if (!this.connection.getAutoCommit()) {
+	                this.connection.rollback();
+	            }
+	        } catch (SQLException exRollback) {
+	            this.flagError = true;
+	            this.msgError += " Error en intento de rollback en deleteUserById. +Info: " + exRollback.getMessage();
+	        }
+	    }
+
+	    return numRowsAffected;
+	}
 
 }

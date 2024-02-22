@@ -5,6 +5,8 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="_csrf" th:content="${_csrf.token}"/>
+	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 	<title>Gestión de Usuarios</title>
 	<link th:href="@{/styles/home.css}" rel="stylesheet">
 	<link th:href="@{/bootstrap/4.3.1/css/bootstrap.min.css}" rel="stylesheet">
@@ -16,7 +18,6 @@
 
 <body>
 	<div th:replace="~{fragments/menu :: navbar}"></div>
-
 	<div class="container mt-5">
 		<h1 class="text-center">Gestión de Usuarios</h1>
 		<button type="button" class="btn btn-primary my-3" data-toggle="modal" data-target="#usuarioModal">Agregar
@@ -37,13 +38,14 @@
 					<td th:text="${usuario.idUsuario}">ID</td>
 					<td th:text="${usuario.nombre}">Nombre</td>
 					<td th:text="${usuario.email}">Email</td>
-					<td th:text="${usuario.rol}">Rol</td>	
+					<td th:text="${usuario.rol}">Rol</td>
 					<td>
-    <button type="button" class="btn btn-danger btn-sm" onclick="mostrarConfirmacionBorrado('${usuario.idUsuario}')">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</td>			
-				</tr>	
+						<button type="button" class="btn btn-danger btn-sm"
+							th:attr="onclick=|mostrarConfirmacionBorrado('${usuario.idUsuario}');|">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</td>
+				</tr>
 			</tbody>
 		</table>
 		
