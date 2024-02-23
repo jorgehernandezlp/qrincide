@@ -2,11 +2,8 @@ package es.prw.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import es.dsw.connectors.MySqlConnection;
 import es.prw.models.Equipo;
+import es.prw.models.Incidencia;
 import es.prw.models.Usuario;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,18 +32,28 @@ public class IndexController {
 		System.out.println("Dentro de index");
 		
 		if (authentication.isAuthenticated()) {
-		//COOKIE FECHA			 
+			MySqlConnection objMySqlConnection = new MySqlConnection();
+			objMySqlConnection.open();    
+
+			List<Incidencia> listaIncidencias = new ArrayList<>();
 			try {
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-				String dateTimeNow = LocalDateTime.now().format(formatter);
-				String encodedDateTime;
-				encodedDateTime = URLEncoder.encode(dateTimeNow, StandardCharsets.UTF_8.toString());
-				Cookie lastAccessCookie = new Cookie("lastAccess", encodedDateTime);
-				lastAccessCookie.setMaxAge(7 * 24 * 60 * 60); 
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}	 
+			    ResultSet rs = objMySqlConnection.executeSelect(
+			        "SELECT Incidencias.*, Usuarios.Nombre AS UsuarioNombre, Equipos.Marca AS EquipoMarca, Equipos.Modelo AS EquipoModelo " +
+			        "FROM Incidencias " +
+			        "JOIN Usuarios ON Incidencias.ID_Usuario = Usuarios.ID_Usuario " +
+			        "JOIN Equipos ON Incidencias.ID_Equipo = Equipos.ID_Equipo;"
+			    );
+			    while (rs != null && rs.next()) {
+			        Incidencia incidencia = new Incidencia(rs); 
+			        listaIncidencias.add(incidencia);
+			    }
+			} catch (Exception e) {
+			    e.printStackTrace();
+			} finally {
+			    objMySqlConnection.close();
+			}
+
+			model.addAttribute("incidencias", listaIncidencias); 
 										
 			String nombreUsuario = authentication.getName();
 			model.addAttribute("nombreUsuario", nombreUsuario);
@@ -211,6 +219,25 @@ public class IndexController {
 	            objMySqlConnection.close();
 	        }
 	        return "redirect:/equipos"; // Redirige a la página de gestión de equipos
+	    }
+	    @PostMapping("/borrarEquipo")
+	    public String borrarEquipo(@RequestParam("idEquipo") String idEquipo) {
+	        int idEquipoInt = Integer.parseInt(idEquipo);
+	        System.out.println("Borrar Equipo " + idEquipo);
+
+	        MySqlConnection objMySqlConnection = new MySqlConnection();
+	        objMySqlConnection.open();       
+
+	        try {
+	            int numRowsAffected = objMySqlConnection.deleteEquipoById(idEquipoInt);
+	            System.out.println("Número de equipos borrados: " + numRowsAffected);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        } finally {
+	            objMySqlConnection.close();
+	        }
+
+	        return "redirect:/equipos"; // Redirige a la página de usuarios después del borrado
 	    }
 	}
 

@@ -35,12 +35,29 @@ function mostrarConfirmacionBorrado(idEquipo) {
 $(document).ready(function() {
     // Manejar la confirmación de borrado
     $('#confirmarBorradoBtn').click(function() {
+		 // Leer el token CSRF y el nombre del encabezado desde las etiquetas meta
+    	var token = $('meta[name="_csrf"]').attr('content');
+    	var header = $('meta[name="_csrf_header"]').attr('content');
+    	
         var idEquipo = $(this).data('idEquipo');
         console.log("Borrar el equipo con ID:", idEquipo);
-        // Aquí deberías hacer una solicitud AJAX para borrar el equipo por su ID
-        // Por simplicidad, se omite la solicitud AJAX y solo se muestra un mensaje
-        alert("Equipo borrado (simulado).");
-
+        $.ajax({
+        type: "POST",
+        url: "/borrarEquipo",
+        beforeSend: function(xhr) {            
+            xhr.setRequestHeader(header, token);
+        },
+        data: { idEquipo: idEquipo },
+        success: function(response) {
+            // Código para manejar la respuesta exitosa
+            location.reload();
+        },
+        error: function(xhr, status, error) {
+            // Código para manejar la respuesta de error
+            console.error("Error al borrar equipo:", error);
+            alert("Error al borrar usuario. Inténtelo de nuevo.");
+        }
+    });
         // Cerrar el modal de confirmación
         $('#confirmacionBorradoModal').modal('hide');
 

@@ -369,5 +369,36 @@ public class MySqlConnection {
 
 	    return numRowsAffected;
 	}
+	public int deleteEquipoById(int idEquipo) {
+	    int numRowsAffected = 0;
+	    try {
+	        this._initializeError();
+	        if (this.connection != null && !this.connection.isClosed()) {
+	            String sqlDeleteEquipo = "DELETE FROM equipos WHERE id_equipo = ?";        
+	            PreparedStatement statement = this.connection.prepareStatement(sqlDeleteEquipo);
+	            
+	            statement.setInt(1, idEquipo);
+
+	            // Ejecutar la actualización
+	            numRowsAffected = statement.executeUpdate();
+	        } else {
+	            this.flagError = true;
+	            this.msgError = "Error en deleteUserById. +Info: Conexión no disponible.";
+	        }
+	    } catch (SQLException ex) {
+	        this.flagError = true;
+	        this.msgError = "Error en deleteUserById. +Info: " + ex.getMessage();
+	        try {
+	            if (!this.connection.getAutoCommit()) {
+	                this.connection.rollback();
+	            }
+	        } catch (SQLException exRollback) {
+	            this.flagError = true;
+	            this.msgError += " Error en intento de rollback en deleteUserById. +Info: " + exRollback.getMessage();
+	        }
+	    }
+
+	    return numRowsAffected;
+	}
 
 }

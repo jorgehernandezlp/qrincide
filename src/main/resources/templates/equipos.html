@@ -43,7 +43,7 @@
                             Editar
                         </button>
                         <button type="button" class="btn btn-danger btn-sm" th:attr="onclick=|mostrarConfirmacionBorrado('${equipo.idEquipo}');|">
-                            <span aria-hidden="true">&times;</span> Eliminar
+                            <span aria-hidden="true">&times;</span>
                         </button>
                         <button type="button" class="btn btn-info btn-sm" th:data-id="${equipo.idEquipo}" onclick="mostrarModalQR(this.getAttribute('data-id'))">
                     		<img th:src="@{/img/codigo-qr.png}" alt="QR" style="width: 20px;"> 
