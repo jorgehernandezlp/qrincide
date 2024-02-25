@@ -40,6 +40,10 @@
 					<td th:text="${usuario.email}">Email</td>
 					<td th:text="${usuario.rol}">Rol</td>
 					<td>
+						<button type="button" class="btn btn-warning btn-sm"
+							th:attr="data-toggle='modal', data-target='#usuarioModal', onclick=|cargarUsuario('${usuario.idUsuario}');|">
+							Editar
+						</button>
 						<button type="button" class="btn btn-danger btn-sm"
 							th:attr="onclick=|mostrarConfirmacionBorrado('${usuario.idUsuario}');|">
 							<span aria-hidden="true">&times;</span>
@@ -79,6 +83,7 @@
 								<label for="usuarioRol">Rol</label>
 								<select class="form-control" id="usuarioRol" name="rol">
 									<option>Usuario</option>
+									<option>Soporte</option>
 									<option>Administrador</option>
 								</select>
 							</div>
@@ -127,6 +132,35 @@
 			</button>
 		</div>
 	</div>
+	<!-- Modal editar usuario -->
+	<div class="modal fade" id="usuarioModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Editar Usuario</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="usuarioForm">
+                    <!-- Campos del formulario para editar, por ejemplo: -->
+                    <div class="form-group">
+                        <label for="nombreUsuario">Nombre</label>
+                        <input type="text" class="form-control" id="nombreUsuario">
+                    </div>
+                    <!-- Agrega más campos según sea necesario -->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="guardarCambios();">Guardar cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+	
+	
 </body>
 
 </html>

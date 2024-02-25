@@ -5,9 +5,17 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import es.dsw.connectors.MySqlConnection;
+import es.prw.models.CustomUserDetails;
 import es.prw.models.Equipo;
 import es.prw.models.Incidencia;
 import es.prw.models.Usuario;
@@ -25,220 +34,304 @@ import jakarta.servlet.http.HttpServletResponse;
 
 
 @Controller
-public class IndexController {   
+public class IndexController {
 	
-	@GetMapping(value= {"/","/index"})
-	public String index(Model model, Authentication authentication, HttpServletResponse response) {		
-		System.out.println("Dentro de index");
-		
-		if (authentication.isAuthenticated()) {
-			MySqlConnection objMySqlConnection = new MySqlConnection();
-			objMySqlConnection.open();    
+	private final InMemoryUserDetailsManager InMemoryUserDetailsManager;
 
+	public IndexController(InMemoryUserDetailsManager inMemoryUserDetailsManager) {
+	    this.InMemoryUserDetailsManager = inMemoryUserDetailsManager;
+	}
+	
+	
+	
+	@GetMapping(value = { "/", "/index" })
+	public String index(Model model, Authentication authentication, HttpServletResponse response) {
+
+		if (authentication.isAuthenticated()) {
+			String nombreUsuario = authentication.getName();
+			MySqlConnection objMySqlConnection = new MySqlConnection();
+			objMySqlConnection.open();
 			List<Incidencia> listaIncidencias = new ArrayList<>();
 			try {
-			    ResultSet rs = objMySqlConnection.executeSelect(
-			        "SELECT Incidencias.*, Usuarios.Nombre AS UsuarioNombre, Equipos.Marca AS EquipoMarca, Equipos.Modelo AS EquipoModelo " +
-			        "FROM Incidencias " +
-			        "JOIN Usuarios ON Incidencias.ID_Usuario = Usuarios.ID_Usuario " +
-			        "JOIN Equipos ON Incidencias.ID_Equipo = Equipos.ID_Equipo;"
-			    );
-			    while (rs != null && rs.next()) {
-			        Incidencia incidencia = new Incidencia(rs); 
-			        listaIncidencias.add(incidencia);
-			    }
+				String query;
+
+				Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+				for (GrantedAuthority authority : authorities) {
+					System.out.println("Inicio de sesión del usuario: '" + nombreUsuario + "' con rol: "
+							+ authority.getAuthority());
+				}
+
+				if (authorities.stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_Administrador")
+						|| auth.getAuthority().equals("ROLE_Soporte"))) {
+					query = "SELECT Incidencias.*, Usuarios.Nombre AS UsuarioNombre, Equipos.Marca AS EquipoMarca, Equipos.Modelo AS EquipoModelo "
+							+ "FROM Incidencias " + "JOIN Usuarios ON Incidencias.ID_Usuario = Usuarios.ID_Usuario "
+							+ "JOIN Equipos ON Incidencias.ID_Equipo = Equipos.ID_Equipo;";
+				} else {
+					// Asumiendo que puedes obtener el ID del usuario logueado (el método
+					// getUserId() es ficticio)
+					Long userId = getUserId(authentication); // Necesitas implementar este método
+					query = "SELECT Incidencias.*, Usuarios.Nombre AS UsuarioNombre, Equipos.Marca AS EquipoMarca, Equipos.Modelo AS EquipoModelo "
+							+ "FROM Incidencias " + "JOIN Usuarios ON Incidencias.ID_Usuario = Usuarios.ID_Usuario "
+							+ "JOIN Equipos ON Incidencias.ID_Equipo = Equipos.ID_Equipo "
+							+ "WHERE Incidencias.ID_Usuario = " + userId + ";";
+				}
+				ResultSet rs = objMySqlConnection.executeSelect(query);
+				while (rs != null && rs.next()) {
+					Incidencia incidencia = new Incidencia(rs);
+					listaIncidencias.add(incidencia);
+				}
 			} catch (Exception e) {
-			    e.printStackTrace();
+				e.printStackTrace();
 			} finally {
-			    objMySqlConnection.close();
+				objMySqlConnection.close();
 			}
 
-			model.addAttribute("incidencias", listaIncidencias); 
-										
-			String nombreUsuario = authentication.getName();
+			model.addAttribute("incidencias", listaIncidencias);
 			model.addAttribute("nombreUsuario", nombreUsuario);
-			System.out.println(nombreUsuario);			
-		}			
-		
-					
-					
-		return "home";		
-	}
-	
-	@GetMapping(value= {"/login"})
-	public String login(Model model, HttpServletRequest request) {
-		try {
-		 Cookie[] cookies = request.getCookies();
-		    if (cookies != null) {
-		        for (Cookie cookie : cookies) {
-		            if ("lastAccess".equals(cookie.getName())) {
-		                String decodedDateTime;
-						
-							decodedDateTime = URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8.toString());
-					
-		                model.addAttribute("lastAccessTime", decodedDateTime);
-		                break;
-		            }
-		        }
-		    }
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			model.addAttribute("isHome", true);
+
 		}
-		return "login";		
+
+		return "home";
+	}
+
+	private Long getUserId(Authentication authentication) {
+		if (authentication == null) {
+			// Opcionalmente, puedes obtener el objeto Authentication de
+			// SecurityContextHolder si no se pasa como parámetro
+			authentication = SecurityContextHolder.getContext().getAuthentication();
+		}
+		if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+			if (userDetails instanceof CustomUserDetails) {
+				return ((CustomUserDetails) userDetails).getId();
+			}
+		}
+		return null;
+
+	}
+
+	@GetMapping(value = { "/login" })
+	public String login(Model model, HttpServletRequest request) throws UnsupportedEncodingException {
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if ("lastAccess".equals(cookie.getName())) {
+					String decodedDateTime;
+
+					decodedDateTime = URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8.toString());
+
+					model.addAttribute("lastAccessTime", decodedDateTime);
+					break;
+				}
+			}
+		}
+		return "login";
+	}
+
+	@GetMapping("/incidencias")
+	public String gestionIncidencias(Model model) {
+		MySqlConnection objMySqlConnection = new MySqlConnection();
+		try {
+
+			objMySqlConnection.open();
+
+			List<Incidencia> listaIncidencias = new ArrayList<>();
+			ResultSet rs = objMySqlConnection.executeSelect(
+					"SELECT Incidencias.*, Usuarios.Nombre AS UsuarioNombre, Equipos.Marca AS EquipoMarca, Equipos.Modelo AS EquipoModelo "
+							+ "FROM Incidencias " + "JOIN Usuarios ON Incidencias.ID_Usuario = Usuarios.ID_Usuario "
+							+ "JOIN Equipos ON Incidencias.ID_Equipo = Equipos.ID_Equipo;");
+			while (rs != null && rs.next()) {
+				Incidencia incidencia = new Incidencia(rs);
+				listaIncidencias.add(incidencia);
+			}
+
+			model.addAttribute("incidencias", listaIncidencias);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			objMySqlConnection.close();
+		}
+
+		return "incidencias";
+	}
+
+	@GetMapping("/usuarios")
+	public String gestionUsuarios(Model model) {
+
+		System.out.println("Gestión de usuarios");
+		MySqlConnection objMySqlConnection = new MySqlConnection();
+		objMySqlConnection.open();
+
+		List<Usuario> listaUsuarios = new ArrayList<>();
+		try {
+			ResultSet rs = objMySqlConnection.executeSelect("SELECT * FROM Usuarios;");
+			while (rs != null && rs.next()) {
+				Usuario usuario = new Usuario(rs);
+				listaUsuarios.add(usuario);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			objMySqlConnection.close();
+		}
+
+		model.addAttribute("usuarios", listaUsuarios);
+		return "usuarios";
+	}
+
+	@PostMapping(value = "/agregarUsuario")
+	public String agregarUsuario(
+			@RequestParam("nombre") String nombre, 
+			@RequestParam("contraseña") String contraseña,
+			@RequestParam("email") String email, 
+			@RequestParam("rol") String rol, Model model,
+			RedirectAttributes redirectAttributes) {
+		
+		
+		
+		System.out.println("Agregar usuario");
+		MySqlConnection objMySqlConnection = new MySqlConnection();
+		objMySqlConnection.open();
+		String sql = "INSERT INTO Usuarios (nombre, contraseña, email, rol) VALUES ('" + nombre + "', '" + contraseña
+				+ "', '" + email + "', '" + rol + "')";
+		System.out.println(sql);
+		ResultSet rs = objMySqlConnection.executeInsert(sql);
+		try {
+			if (rs != null) {
+				List<GrantedAuthority> authorities = AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_" + rol);
+	            UserDetails user = User.withUsername(nombre)
+	                                   .password("{noop}" + contraseña) // Usa un PasswordEncoder para producción
+	                                   .authorities(authorities)
+	                                   .build();
+	            InMemoryUserDetailsManager.createUser(user);
+
+	            redirectAttributes.addFlashAttribute("mensaje", "Usuario agregado correctamente.");
+	            return "redirect:/usuarios"; // Redirige a la página de usuarios
+			} else {
+				// Error en la operación
+				redirectAttributes.addFlashAttribute("error", "Error al agregar el usuario. Inténtelo de nuevo.");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			objMySqlConnection.close();
+		}
+		
+		
+		return "redirect:/usuarios"; // Página de gestión de usuarios
+
+	}
+
+	@PostMapping("/borrarUsuario")
+	public String borrarUsuario(@RequestParam("idUsuario") String idUsuario) {
+		int idUsuarioInt = Integer.parseInt(idUsuario);
+		System.out.println("Borrar usuario " + idUsuarioInt);
+
+		MySqlConnection objMySqlConnection = new MySqlConnection();
+		objMySqlConnection.open();
+
+		try {
+			int numRowsAffected = objMySqlConnection.deleteUserById(idUsuarioInt);
+			System.out.println("Número de usuarios borrados: " + numRowsAffected);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			objMySqlConnection.close();
+		}
+
+		return "redirect:/usuarios"; // Redirige a la página de usuarios después del borrado
+	}
+
+	@GetMapping("/equipos")
+	public String gestionEquipos(Model model) {
+		System.out.println("Gestión de equipos");
+		MySqlConnection objMySqlConnection = new MySqlConnection();
+		objMySqlConnection.open();
+
+		List<Equipo> listaEquipos = new ArrayList<>();
+		try {
+			ResultSet rs = objMySqlConnection.executeSelect("SELECT * FROM Equipos;");
+			while (rs != null && rs.next()) {
+				Equipo equipo = new Equipo(rs);
+				listaEquipos.add(equipo);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			objMySqlConnection.close();
+		}
+
+		model.addAttribute("equipos", listaEquipos);
+		return "equipos"; // Asegúrate de que este es el nombre correcto de tu plantilla Thymeleaf
+	}
+
+	@PostMapping(value = "/agregarEquipo")
+	public String agregarEquipo(@RequestParam("tipo") String tipo, @RequestParam("marca") String marca,
+			@RequestParam("modelo") String modelo, @RequestParam("descripcion") String descripcion, Model model,
+			RedirectAttributes redirectAttributes) {
+		System.out.println("Agregar equipo");
+		MySqlConnection objMySqlConnection = new MySqlConnection();
+		objMySqlConnection.open();
+		String sql = "INSERT INTO equipos (tipo, marca, modelo, descripción) VALUES ('" + tipo + "', '" + marca + "', '"
+				+ modelo + "', '" + descripcion + "')";
+		System.out.println(sql);
+		ResultSet rs = objMySqlConnection.executeInsert(sql);
+		try {
+			if (rs != null) {
+				// Operación exitosa
+				redirectAttributes.addFlashAttribute("mensaje", "Equipo agregado correctamente.");
+				return "redirect:/equipos"; // Redirige a la página de usuarios
+			} else {
+				// Error en la operación
+				redirectAttributes.addFlashAttribute("error", "Error al agregar el equipo. Inténtelo de nuevo.");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			objMySqlConnection.close();
+		}
+		return "redirect:/equipos"; // Redirige a la página de gestión de equipos
+	}
+
+	@PostMapping("/borrarEquipo")
+	public String borrarEquipo(@RequestParam("idEquipo") String idEquipo) {
+		int idEquipoInt = Integer.parseInt(idEquipo);
+		System.out.println("Borrar Equipo " + idEquipo);
+
+		MySqlConnection objMySqlConnection = new MySqlConnection();
+		objMySqlConnection.open();
+
+		try {
+			int numRowsAffected = objMySqlConnection.deleteEquipoById(idEquipoInt);
+			System.out.println("Número de equipos borrados: " + numRowsAffected);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			objMySqlConnection.close();
+		}
+
+		return "redirect:/equipos"; // Redirige a la página de usuarios después del borrado
 	}
 	
-	 @GetMapping("/incidencias")
-	    public String gestionIncidencias() {
-	        return "incidencias"; 
-	    }
-	 
-
-
-	    @GetMapping("/usuarios")
-	    public String gestionUsuarios(Model model) {    	
-	    	
-	        System.out.println("Dentro de gestionUsuarios");	        
-	        MySqlConnection objMySqlConnection = new MySqlConnection();
-			objMySqlConnection.open();		
-				
-	        List<Usuario> listaUsuarios = new ArrayList<>();
-	        try {
-	            ResultSet rs = objMySqlConnection.executeSelect("SELECT * FROM Usuarios;");
-	            while (rs != null && rs.next()) {
-	                Usuario usuario = new Usuario(rs); 
-	                listaUsuarios.add(usuario);
-	            }
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        } finally {
-	            objMySqlConnection.close();
-	        }
-
-	        model.addAttribute("usuarios", listaUsuarios);
-	        return "usuarios";
-	    }
-	    
-	    @PostMapping(value= "/agregarUsuario")
-	    public String agregarUsuario(@RequestParam("nombre") String nombre,
-	                                  @RequestParam("contraseña") String contraseña,
-	                                  @RequestParam("email") String email,
-	                                  @RequestParam("rol") String rol,
-	                                  Model model,  RedirectAttributes redirectAttributes) {
-	    	System.out.println("Agregar usuario");
-	    	MySqlConnection objMySqlConnection = new MySqlConnection();
-	    	objMySqlConnection.open();
-	        String sql = "INSERT INTO Usuarios (nombre, contraseña, email, rol) VALUES ('" + nombre + "', '" + contraseña + "', '" + email + "', '" + rol + "')";
-	        System.out.println(sql);
-	        ResultSet rs = objMySqlConnection.executeInsert(sql);
-	        try {
-		        if (rs != null) {
-		            // Operación exitosa
-		        	redirectAttributes.addFlashAttribute("mensaje", "Usuario agregado correctamente.");
-		            return "redirect:/usuarios"; // Redirige a la página de usuarios
-		        } else {
-		            // Error en la operación
-		        	redirectAttributes.addFlashAttribute("error", "Error al agregar el usuario. Inténtelo de nuevo.");
-		        }
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        } finally {
-	            objMySqlConnection.close();
-	        }
-	        	return "redirect:/usuarios"; // Página de gestión de usuarios
-	        
-	    }
-	    
-	    @PostMapping("/borrarUsuario")
-	    public String borrarUsuario(@RequestParam("idUsuario") String idUsuario) {
-	        int idUsuarioInt = Integer.parseInt(idUsuario);
-	        System.out.println("Borrar usuario " + idUsuarioInt);
-
-	        MySqlConnection objMySqlConnection = new MySqlConnection();
-	        objMySqlConnection.open();       
-
-	        try {
-	            int numRowsAffected = objMySqlConnection.deleteUserById(idUsuarioInt);
-	            System.out.println("Número de usuarios borrados: " + numRowsAffected);
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        } finally {
-	            objMySqlConnection.close();
-	        }
-
-	        return "redirect:/usuarios"; // Redirige a la página de usuarios después del borrado
-	    }
-	    
-	    @GetMapping("/equipos")
-	    public String gestionEquipos(Model model) {
-	        System.out.println("Dentro de gestionEquipos");
-	        MySqlConnection objMySqlConnection = new MySqlConnection();
-	        objMySqlConnection.open();
-
-	        List<Equipo> listaEquipos = new ArrayList<>();
-	        try {	            
-	            ResultSet rs = objMySqlConnection.executeSelect("SELECT * FROM Equipos;");
-	            while (rs != null && rs.next()) {
-	                Equipo equipo = new Equipo(rs);
-	                listaEquipos.add(equipo);
-	            }
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        } finally {
-	            objMySqlConnection.close();
-	        }
-
-	        model.addAttribute("equipos", listaEquipos);
-	        return "equipos"; // Asegúrate de que este es el nombre correcto de tu plantilla Thymeleaf
-	    }
-	    
-	    @PostMapping(value= "/agregarEquipo")
-	    public String agregarEquipo(@RequestParam("tipo") String tipo,
-	                                @RequestParam("marca") String marca,
-	                                @RequestParam("modelo") String modelo,
-	                                @RequestParam("descripcion") String descripcion,	                                
-	                                Model model, RedirectAttributes redirectAttributes) {
-	        System.out.println("Agregar equipo");
-	        MySqlConnection objMySqlConnection = new MySqlConnection();
-	        objMySqlConnection.open();	        
-	        String sql = "INSERT INTO equipos (tipo, marca, modelo, descripción) VALUES ('" + tipo + "', '" + marca + "', '" + modelo + "', '" + descripcion + "')";
-	        System.out.println(sql);
-	        ResultSet rs = objMySqlConnection.executeInsert(sql);
-	        try {
-		        if (rs != null) {
-		            // Operación exitosa
-		        	redirectAttributes.addFlashAttribute("mensaje", "Equipo agregado correctamente.");
-		            return "redirect:/equipos"; // Redirige a la página de usuarios
-		        } else {
-		            // Error en la operación
-		        	redirectAttributes.addFlashAttribute("error", "Error al agregar el equipo. Inténtelo de nuevo.");
-		        }
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        } finally {
-	            objMySqlConnection.close();
-	        }
-	        return "redirect:/equipos"; // Redirige a la página de gestión de equipos
-	    }
-	    @PostMapping("/borrarEquipo")
-	    public String borrarEquipo(@RequestParam("idEquipo") String idEquipo) {
-	        int idEquipoInt = Integer.parseInt(idEquipo);
-	        System.out.println("Borrar Equipo " + idEquipo);
-
-	        MySqlConnection objMySqlConnection = new MySqlConnection();
-	        objMySqlConnection.open();       
-
-	        try {
-	            int numRowsAffected = objMySqlConnection.deleteEquipoById(idEquipoInt);
-	            System.out.println("Número de equipos borrados: " + numRowsAffected);
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        } finally {
-	            objMySqlConnection.close();
-	        }
-
-	        return "redirect:/equipos"; // Redirige a la página de usuarios después del borrado
-	    }
+	//Servicio rest para la consulta de equipos
+	@GetMapping("/buscarEquipos")
+	public ResponseEntity<List<Equipo>> buscarEquipos() {
+		MySqlConnection objMySqlConnection = new MySqlConnection();
+		objMySqlConnection.open();
+		List<Equipo> resultados = new ArrayList<>();
+		try {
+			ResultSet rs = objMySqlConnection.executeSelect("SELECT * FROM Equipos;");
+			while (rs != null && rs.next()) {
+				Equipo equipo = new Equipo(rs);
+				resultados.add(equipo);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			objMySqlConnection.close();
+		}
+	    return ResponseEntity.ok(resultados);
 	}
 
-
+}

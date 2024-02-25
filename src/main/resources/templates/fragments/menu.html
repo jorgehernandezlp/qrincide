@@ -11,10 +11,13 @@
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav mx-auto">
                     <a class="nav-link active" aria-current="page" th:href="@{/index}">Inicio</a>
-                    <a class="nav-link" href="#" data-toggle="modal" data-target="#nuevaIncidenciaModal">Nueva Incidencia</a>
-                    <a class="nav-link" th:href="@{/incidencias}">Gestión de incidencias</a>
-                    <a class="nav-link" th:href="@{/usuarios}">Gestión de usuarios</a>
-                    <a class="nav-link" th:href="@{/equipos}">Gestión de equipos</a>
+                    <a class="nav-link" href="#" data-toggle="modal" data-target="#nuevaIncidenciaModal" th:if="${isHome}">Nueva Incidencia</a>
+                    <a class="nav-link" sec:authorize="hasRole('Administrador') or hasRole('Soporte')"
+                    th:href="@{/incidencias}">Gestión de incidencias</a>
+                    <a class="nav-link" sec:authorize="hasRole('Administrador')"
+                     th:href="@{/usuarios}">Gestión de usuarios</a>
+                    <a class="nav-link" sec:authorize="hasRole('Administrador')"
+                    th:href="@{/equipos}">Gestión de equipos</a>
                     <form th:action="@{/logout}" method="POST" id="logoutForm">
                         <a href="#" onclick="document.getElementById('logoutForm').submit();" class="nav-link">Salir</a>
                     </form>

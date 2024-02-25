@@ -1,111 +1,120 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRInside</title>
-    <link th:href="@{/styles/home.css}" rel="stylesheet">
-    <link th:href="@{/bootstrap/4.3.1/css/bootstrap.min.css}" rel="stylesheet">
-    <script src="./js/jquery-3.6.1.min.js"></script>
-    <script src="./bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
-    <script src="./js/home.js"></script>
-</head>
-<body>
-<div th:replace="~{fragments/menu :: navbar}"></div>
 
-<div class="container mt-5">
-	  <h1 class="text-center">Bienvenido a QRInside, <span th:text="${nombreUsuario}">Usuario</span>!</h1>
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <div class="alert alert-info" role="alert">
-                Incidencias Pendientes: <strong>1</strong>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="alert alert-warning" role="alert">
-                Incidencias en Curso: <strong>1</strong>
-            </div>
-        </div>
-    </div>
-    <h2>Registro de Incidencias</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Descripción</th>
-                <th>Usuario</th>
-                <th>Estado</th>                
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td style="color: #f58220;">#1</td>
-                <td>Error en el sistema de facturación</td>                	
-                <td>Nadia</td>
-                <td><span class="badge bg-warning text-dark">Pendiente</span></td>
-            </tr>
-        </tbody>
-    </table>
-    <!-- Modal Nueva Incidencia -->
-<div class="modal fade" id="nuevaIncidenciaModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalLabel">Nueva Incidencia</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <!-- Formulario para nueva incidencia -->
-        <form id="formNuevaIncidencia">
-		  <div class="form-group">
-    			<label for="nombreUsuario">Usuario</label>
-    			<input type="text" class="form-control" id="nombreUsuario" name="nombreUsuario" th:value="${nombreUsuario}" disabled>
-		  </div>
-          <div class="form-group">
-            <label for="incidenciaTitulo">Título</label>
-            <input type="text" class="form-control" id="incidenciaTitulo" name="titulo" required>
-          </div>
-          <div class="form-group">
-            <label for="incidenciaDescripcion">Descripción</label>
-            <textarea class="form-control" id="incidenciaDescripcion" name="descripcion" required></textarea>
-          </div>
-          <div class="form-group">
-    		<label for="incidenciaEquipo">Equipo</label>
-    		<input type="text" class="form-control" id="incidenciaEquipo" name="equipo" value="HP Pavilion TP01-4005ns Intel Core i5-13400/16GB/1TB SSD" disabled>
-		  </div>
-          <div class="form-group">
-            <label for="incidenciaUbicacion">Ubicación</label>
-            <select class="form-control" id="incidenciaUbicacion" name="ubicacion">
-              <option>Edificio A</option>
-              <option>Edificio B</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="incidenciaFechaCreacion">Fecha de Creación</label>
-            <input type="text" class="form-control" id="incidenciaFechaCreacion" name="fechaCreacion" readonly>
-          </div>
-          <div class="form-group">
-            <label for="incidenciaPrioridad">Prioridad</label>
-            <select class="form-control" id="incidenciaPrioridad" name="prioridad">
-              <option>Baja</option>
-              <option>Media</option>
-              <option>Alta</option>
-            </select>
-          </div>
-          <!-- El estado se establecerá automáticamente a "Pendiente", por lo que no es necesario un campo de entrada aquí -->
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-        <button type="submit" form="formNuevaIncidencia" class="btn btn-primary">Guardar Incidencia</button>
-      </div>
-    </div>
-  </div>
-</div>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>QRInside</title>
+	<link th:href="@{/styles/home.css}" rel="stylesheet">
+	<link th:href="@{/bootstrap/4.3.1/css/bootstrap.min.css}" rel="stylesheet">
+	<script src="./js/jquery-3.6.1.min.js"></script>
+	<script src="./bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+	<script src="./js/home.js"></script>
+</head>
+
+<body>
+	<div th:replace="~{fragments/menu :: navbar}"></div>
+
+	<div class="container mt-5">
+		<h1 class="text-center">Bienvenido a QRInside, <span th:text="${nombreUsuario}">Usuario</span>!</h1>
+		<div class="row mt-4">
+			<div class="col-md-6">
+				<div class="alert alert-info" role="alert">
+					Incidencias Pendientes: <strong>1</strong>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="alert alert-warning" role="alert">
+					Incidencias Totales: <strong>1</strong>
+				</div>
+			</div>
+		</div>
+		<h2>Registro de Incidencias</h2>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Descripción</th>
+					<th>Usuario</th>
+					<th>Estado</th>
+					<th>Equipo</th> <!-- Asumiendo que quieras mostrar también la marca y el modelo del equipo -->
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="incidencia : ${incidencias}">
+					<td style="color: #f58220;" th:text="${incidencia.idIncidencia}">1</td>
+					<td th:text="${incidencia.descripcion}">Error en el sistema de facturación</td>
+					<td th:text="${incidencia.nombreUsuario}">Nadia</td>
+					<td><span class="badge bg-warning text-dark" th:text="${incidencia.estado}">Pendiente</span></td>
+					<td th:text="${incidencia.marcaEquipo} + ' ' + ${incidencia.modeloEquipo}">Marca Modelo</td>
+			</tbody>
+		</table>
+		<!-- Modal Nueva Incidencia -->
+		<div class="modal fade" id="nuevaIncidenciaModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="modalLabel">Nueva Incidencia</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<!-- Formulario para nueva incidencia -->
+						<form id="formNuevaIncidencia">
+							<div class="form-group">
+								<label for="nombreUsuario">Usuario</label>
+								<input type="text" class="form-control" id="nombreUsuario" name="nombreUsuario"
+									th:value="${nombreUsuario}" disabled>
+							</div>
+							<div class="form-group">
+								<label for="incidenciaTitulo">Título</label>
+								<input type="text" class="form-control" id="incidenciaTitulo" name="titulo" required>
+							</div>
+							<div class="form-group">
+								<label for="incidenciaDescripcion">Descripción</label>
+								<textarea class="form-control" id="incidenciaDescripcion" name="descripcion"
+									required></textarea>
+							</div>
+							<div class="form-group">
+								<label for="incidenciaEquipo">Equipo</label>
+								<input type="text" class="form-control" id="incidenciaEquipo" name="equipo">
+								<div id="listaEquipos" class="lista-autocompletado"></div>
+							</div>
+							<div class="form-group">
+								<label for="incidenciaUbicacion">Ubicación</label>
+								<select class="form-control" id="incidenciaUbicacion" name="ubicacion">
+									<option>Edificio A</option>
+									<option>Edificio B</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="incidenciaFechaCreacion">Fecha de Creación</label>
+								<input type="text" class="form-control" id="incidenciaFechaCreacion"
+									name="fechaCreacion" readonly>
+							</div>
+							<div class="form-group">
+								<label for="incidenciaPrioridad">Prioridad</label>
+								<select class="form-control" id="incidenciaPrioridad" name="prioridad">
+									<option>Baja</option>
+									<option>Media</option>
+									<option>Alta</option>
+								</select>
+							</div>
+							<!-- El estado se establecerá automáticamente a "Pendiente", por lo que no es necesario un campo de entrada aquí -->
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+						<button type="submit" form="formNuevaIncidencia" class="btn btn-primary">Guardar
+							Incidencia</button>
+					</div>
+				</div>
+			</div>
+		</div>
 
 
 </body>
+
 </html>

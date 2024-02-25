@@ -7,7 +7,111 @@ import java.sql.SQLException;
 public class Incidencia {
 	
 
-    private int idIncidencia;
+    public int getIdIncidencia() {
+		return idIncidencia;
+	}
+
+	public void setIdIncidencia(int idIncidencia) {
+		this.idIncidencia = idIncidencia;
+	}
+
+	public int getIdUsuario() {
+		return idUsuario;
+	}
+
+	public void setIdUsuario(int idUsuario) {
+		this.idUsuario = idUsuario;
+	}
+
+	public int getIdEquipo() {
+		return idEquipo;
+	}
+
+	public void setIdEquipo(int idEquipo) {
+		this.idEquipo = idEquipo;
+	}
+
+	public String getTitulo() {
+		return titulo;
+	}
+
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
+	}
+
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+
+	public String getUbicacion() {
+		return ubicacion;
+	}
+
+	public void setUbicacion(String ubicacion) {
+		this.ubicacion = ubicacion;
+	}
+
+	public Date getFechaHoraAsignacion() {
+		return fechaHoraAsignacion;
+	}
+
+	public void setFechaHoraAsignacion(Date fechaHoraAsignacion) {
+		this.fechaHoraAsignacion = fechaHoraAsignacion;
+	}
+
+	public Date getFechaHoraResolucion() {
+		return fechaHoraResolucion;
+	}
+
+	public void setFechaHoraResolucion(Date fechaHoraResolucion) {
+		this.fechaHoraResolucion = fechaHoraResolucion;
+	}
+
+	public String getEstado() {
+		return estado;
+	}
+
+	public void setEstado(String estado) {
+		this.estado = estado;
+	}
+
+	public String getPrioridad() {
+		return prioridad;
+	}
+
+	public void setPrioridad(String prioridad) {
+		this.prioridad = prioridad;
+	}
+
+	public String getNombreUsuario() {
+		return nombreUsuario;
+	}
+
+	public void setNombreUsuario(String nombreUsuario) {
+		this.nombreUsuario = nombreUsuario;
+	}
+
+	public String getMarcaEquipo() {
+		return marcaEquipo;
+	}
+
+	public void setMarcaEquipo(String marcaEquipo) {
+		this.marcaEquipo = marcaEquipo;
+	}
+
+	public String getModeloEquipo() {
+		return modeloEquipo;
+	}
+
+	public void setModeloEquipo(String modeloEquipo) {
+		this.modeloEquipo = modeloEquipo;
+	}
+
+	private int idIncidencia;
     private int idUsuario;
     private int idEquipo;
     private String titulo;
@@ -38,4 +142,6 @@ public class Incidencia {
         this.marcaEquipo = rs.getString("EquipoMarca");
         this.modeloEquipo = rs.getString("EquipoModelo");
     }
+    
+    
 }

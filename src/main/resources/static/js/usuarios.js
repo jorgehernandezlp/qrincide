@@ -31,4 +31,22 @@ function mostrarConfirmacionBorrado(idUsuario) {
         borrarUsuario(idUsuario);       
         $('#confirmacionBorradoModal').modal('hide');
     });
+    
+    
+}
+
+function cargarUsuario(idUsuario) {
+    // Realiza una solicitud AJAX para obtener los datos del usuario
+    fetch(`/rutaParaObtenerUsuario/${idUsuario}`)
+        .then(response => response.json())
+        .then(data => {
+            // Suponiendo que 'data' es el objeto con los datos del usuario
+            // Ahora rellena los campos del modal con estos datos
+            document.getElementById('nombreUsuario').value = data.nombre; // Ajusta según tu estructura de datos
+            // Rellena los demás campos de forma similar
+
+            // Finalmente, muestra el modal (Bootstrap 4)
+            $('#usuarioModal').modal('show');
+        })
+        .catch(error => console.error('Error al cargar los datos del usuario:', error));
 }
