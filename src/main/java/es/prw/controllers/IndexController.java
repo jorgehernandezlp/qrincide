@@ -4,6 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -49,13 +51,22 @@ public class IndexController {
 
 		if (authentication.isAuthenticated()) {
 			String nombreUsuario = authentication.getName();
+			int idUsuario = 0;
 			MySqlConnection objMySqlConnection = new MySqlConnection();
 			objMySqlConnection.open();
 			List<Incidencia> listaIncidencias = new ArrayList<>();
+			
 			try {
 				String query;
-
+				String queryIdUsuario = "SELECT * FROM db_inside.usuarios WHERE Nombre = '"+nombreUsuario+"'";
+				ResultSet rsID = objMySqlConnection.executeSelect(queryIdUsuario);
+				while (rsID != null && rsID.next()) {
+					Usuario usuario = new Usuario(rsID);	
+					idUsuario = usuario.getIdUsuario();
+				}
+				
 				Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+				
 				for (GrantedAuthority authority : authorities) {
 					System.out.println("Inicio de sesión del usuario: '" + nombreUsuario + "' con rol: "
 							+ authority.getAuthority());
@@ -66,30 +77,32 @@ public class IndexController {
 					query = "SELECT Incidencias.*, Usuarios.Nombre AS UsuarioNombre, Equipos.Marca AS EquipoMarca, Equipos.Modelo AS EquipoModelo "
 							+ "FROM Incidencias " + "JOIN Usuarios ON Incidencias.ID_Usuario = Usuarios.ID_Usuario "
 							+ "JOIN Equipos ON Incidencias.ID_Equipo = Equipos.ID_Equipo;";
-				} else {
-					// Asumiendo que puedes obtener el ID del usuario logueado (el método
-					// getUserId() es ficticio)
-					Long userId = getUserId(authentication); // Necesitas implementar este método
+				} else {					
+					
 					query = "SELECT Incidencias.*, Usuarios.Nombre AS UsuarioNombre, Equipos.Marca AS EquipoMarca, Equipos.Modelo AS EquipoModelo "
 							+ "FROM Incidencias " + "JOIN Usuarios ON Incidencias.ID_Usuario = Usuarios.ID_Usuario "
 							+ "JOIN Equipos ON Incidencias.ID_Equipo = Equipos.ID_Equipo "
-							+ "WHERE Incidencias.ID_Usuario = " + userId + ";";
+							+ "WHERE Incidencias.ID_Usuario = " + idUsuario + ";";
 				}
+				
 				ResultSet rs = objMySqlConnection.executeSelect(query);
+				
 				while (rs != null && rs.next()) {
 					Incidencia incidencia = new Incidencia(rs);
 					listaIncidencias.add(incidencia);
 				}
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
 				objMySqlConnection.close();
 			}
-
+			int totalIncidencias = listaIncidencias.size();
 			model.addAttribute("incidencias", listaIncidencias);
 			model.addAttribute("nombreUsuario", nombreUsuario);
+			model.addAttribute("idUsuario", idUsuario);
 			model.addAttribute("isHome", true);
-
+			model.addAttribute("totalIncidencias", totalIncidencias);
 		}
 
 		return "home";
@@ -332,6 +345,58 @@ public class IndexController {
 			objMySqlConnection.close();
 		}
 	    return ResponseEntity.ok(resultados);
+	}
+	
+	//Agregar incidencia
+	@PostMapping(value = "/agregarIncidencia")
+	public String agregarIncidencia(
+			 @RequestParam("idUsuario") int idUsuario,
+	            @RequestParam("equipo") int equipo,
+	            @RequestParam("titulo") String titulo,
+	            @RequestParam("descripcion") String descripcion,
+	            @RequestParam("ubicacion") String ubicacion,
+	            @RequestParam("fechaCreacion") String fechaCreacion,
+	            @RequestParam("prioridad") String prioridad,RedirectAttributes redirectAttributes) { 
+		System.out.println("Agregar incidencia");
+		// La fecha de creación recibida como un String       
+        
+        // Definir el formateador para parsear la fecha de creación
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm - dd/MM/yyyy");
+        
+        // Parsear la fecha de creación a un objeto LocalDateTime
+        LocalDateTime dateTime = LocalDateTime.parse(fechaCreacion, formatter);
+        
+        // Convertir la fecha al formato DATETIME de MySQL (yyyy-MM-dd HH:mm:ss)
+        String formattedDate = dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        
+        // Ahora puedes usar `formattedDate` para insertarlo en la base de datos
+        System.out.println(formattedDate);
+		MySqlConnection objMySqlConnection = new MySqlConnection();
+		objMySqlConnection.open();
+		
+		String sql = "INSERT INTO db_inside.incidencias (ID_Usuario, ID_Equipo, Titulo, Descripción, Ubicación, FechaHoraAsignación, Estado, Prioridad) "
+				+ "VALUES ("+idUsuario+", "+equipo+", '"+titulo+"', '"+descripcion+"', '"+ubicacion+"', '"+formattedDate+"', '"
+						+ "Pendiente', '"+prioridad+"')";
+
+		System.out.println(sql);
+		ResultSet rs = objMySqlConnection.executeInsert(sql);
+		try {
+			
+			if (rs != null) {
+				// Operación exitosa
+				redirectAttributes.addFlashAttribute("mensaje", "Equipo agregado correctamente.");
+				return "redirect:/index"; // Redirige a la página de usuarios
+			} else {
+				// Error en la operación
+				System.out.println("Error");
+				redirectAttributes.addFlashAttribute("error", "Error al agregar el equipo. Inténtelo de nuevo.");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			objMySqlConnection.close();
+		}
+		return "home"; // Redirige a la página de gestión de equipos
 	}
 
 }

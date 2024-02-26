@@ -11,6 +11,8 @@
 	<script src="./js/jquery-3.6.1.min.js"></script>
 	<script src="./bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 	<script src="./js/home.js"></script>
+	<meta name="_csrf" th:content="${_csrf.token}"/>
+	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 
 <body>
@@ -21,15 +23,16 @@
 		<div class="row mt-4">
 			<div class="col-md-6">
 				<div class="alert alert-info" role="alert">
-					Incidencias Pendientes: <strong>1</strong>
+					<a href="#" role="button">Ver Historial de Incidencias</a>
 				</div>
 			</div>
 			<div class="col-md-6">
 				<div class="alert alert-warning" role="alert">
-					Incidencias Totales: <strong>1</strong>
+					Incidencias Totales: <strong th:text="${totalIncidencias}">1</strongth:text="${totalIncidencias}">
 				</div>
 			</div>
-		</div>
+			
+			
 		<h2>Registro de Incidencias</h2>
 		<table class="table">
 			<thead>
@@ -38,7 +41,8 @@
 					<th>Descripción</th>
 					<th>Usuario</th>
 					<th>Estado</th>
-					<th>Equipo</th> <!-- Asumiendo que quieras mostrar también la marca y el modelo del equipo -->
+					<th>Equipo</th> 
+					<th>Fecha</th> 
 				</tr>
 			</thead>
 			<tbody>
@@ -48,6 +52,7 @@
 					<td th:text="${incidencia.nombreUsuario}">Nadia</td>
 					<td><span class="badge bg-warning text-dark" th:text="${incidencia.estado}">Pendiente</span></td>
 					<td th:text="${incidencia.marcaEquipo} + ' ' + ${incidencia.modeloEquipo}">Marca Modelo</td>
+					<td th:text="${incidencia.fechaHoraAsignacion}"></td>
 			</tbody>
 		</table>
 		<!-- Modal Nueva Incidencia -->
@@ -62,12 +67,13 @@
 					</div>
 					<div class="modal-body">
 						<!-- Formulario para nueva incidencia -->
-						<form id="formNuevaIncidencia">
+						<form id="formNuevaIncidencia" method="post" action="/agregarIncidencia">
 							<div class="form-group">
 								<label for="nombreUsuario">Usuario</label>
 								<input type="text" class="form-control" id="nombreUsuario" name="nombreUsuario"
 									th:value="${nombreUsuario}" disabled>
 							</div>
+							<input type="hidden" name="idUsuario" th:value="${idUsuario}" />
 							<div class="form-group">
 								<label for="incidenciaTitulo">Título</label>
 								<input type="text" class="form-control" id="incidenciaTitulo" name="titulo" required>
@@ -77,16 +83,16 @@
 								<textarea class="form-control" id="incidenciaDescripcion" name="descripcion"
 									required></textarea>
 							</div>
-							<div class="form-group">
-								<label for="incidenciaEquipo">Equipo</label>
-								<input type="text" class="form-control" id="incidenciaEquipo" name="equipo">
-								<div id="listaEquipos" class="lista-autocompletado"></div>
-							</div>
+							<label for="incidenciaEquipo">Equipo</label>
+							<select class="form-control" id="incidenciaEquipo" name="equipo">
+								<!-- Las opciones se cargarán aquí -->
+							</select>
 							<div class="form-group">
 								<label for="incidenciaUbicacion">Ubicación</label>
 								<select class="form-control" id="incidenciaUbicacion" name="ubicacion">
-									<option>Edificio A</option>
-									<option>Edificio B</option>
+									<option>Edificio-A</option>
+									<option>Edificio-B</option>
+									<option>Edificio-C</option>
 								</select>
 							</div>
 							<div class="form-group">
@@ -112,8 +118,8 @@
 					</div>
 				</div>
 			</div>
-		</div>
-
+		</div>	
+	
 
 </body>
 

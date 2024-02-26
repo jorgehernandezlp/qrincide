@@ -4,8 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Equipo {
-    private int idEquipo;
-    private String codigoQR;
+    private int idEquipo;    
     private String tipo;
     private String marca;
     private String modelo;
@@ -19,8 +18,7 @@ public class Equipo {
     // Constructor que acepta un ResultSet
     public Equipo(ResultSet rs) {
         try {
-            this.idEquipo = rs.getInt("ID_Equipo");
-            this.codigoQR = rs.getString("CódigoQR");
+            this.idEquipo = rs.getInt("ID_Equipo");            
             this.tipo = rs.getString("Tipo");
             this.marca = rs.getString("Marca");
             this.modelo = rs.getString("Modelo");
@@ -41,13 +39,7 @@ public class Equipo {
         this.idEquipo = idEquipo;
     }
 
-    public String getCodigoQR() {
-        return codigoQR;
-    }
-
-    public void setCodigoQR(String codigoQR) {
-        this.codigoQR = codigoQR;
-    }
+  
 
     public String getTipo() {
         return tipo;
@@ -93,8 +85,7 @@ public class Equipo {
     @Override
     public String toString() {
         return "Equipo{" +
-                "idEquipo=" + idEquipo +
-                ", codigoQR='" + codigoQR + '\'' +
+                "idEquipo=" + idEquipo +                
                 ", tipo='" + tipo + '\'' +
                 ", marca='" + marca + '\'' +
                 ", modelo='" + modelo + '\'' +
