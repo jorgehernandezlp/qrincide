@@ -23,6 +23,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import es.dsw.connectors.MySqlConnection;
@@ -398,5 +399,13 @@ public class IndexController {
 		}
 		return "home"; // Redirige a la página de gestión de equipos
 	}
+	
+	 	@GetMapping("/registrarIncidencia")	    
+	    public String registrarIncidencia(@RequestParam(name = "idEquipo") int idEquipo, Model model) {
+	 	model.addAttribute("idEquipo", idEquipo);
+        System.out.println("Registrar incidencia del equipo idEquipo: "+idEquipo);
+        return "registrarIncidencia";
+    }
+
 
 }

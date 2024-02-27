@@ -11,8 +11,8 @@
 	<script src="./js/jquery-3.6.1.min.js"></script>
 	<script src="./bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 	<script src="./js/home.js"></script>
-	<meta name="_csrf" th:content="${_csrf.token}"/>
-	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+	<meta name="_csrf" th:content="${_csrf.token}" />
+	<meta name="_csrf_header" th:content="${_csrf.headerName}" />
 </head>
 
 <body>
@@ -31,95 +31,98 @@
 					Incidencias Totales: <strong th:text="${totalIncidencias}">1</strongth:text="${totalIncidencias}">
 				</div>
 			</div>
-			
-			
-		<h2>Registro de Incidencias</h2>
-		<table class="table">
-			<thead>
-				<tr>
-					<th>ID</th>
-					<th>Descripción</th>
-					<th>Usuario</th>
-					<th>Estado</th>
-					<th>Equipo</th> 
-					<th>Fecha</th> 
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:each="incidencia : ${incidencias}">
-					<td style="color: #f58220;" th:text="${incidencia.idIncidencia}">1</td>
-					<td th:text="${incidencia.descripcion}">Error en el sistema de facturación</td>
-					<td th:text="${incidencia.nombreUsuario}">Nadia</td>
-					<td><span class="badge bg-warning text-dark" th:text="${incidencia.estado}">Pendiente</span></td>
-					<td th:text="${incidencia.marcaEquipo} + ' ' + ${incidencia.modeloEquipo}">Marca Modelo</td>
-					<td th:text="${incidencia.fechaHoraAsignacion}"></td>
-			</tbody>
-		</table>
-		<!-- Modal Nueva Incidencia -->
-		<div class="modal fade" id="nuevaIncidenciaModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-			<div class="modal-dialog modal-lg">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="modalLabel">Nueva Incidencia</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body">
-						<!-- Formulario para nueva incidencia -->
-						<form id="formNuevaIncidencia" method="post" action="/agregarIncidencia">
-							<div class="form-group">
-								<label for="nombreUsuario">Usuario</label>
-								<input type="text" class="form-control" id="nombreUsuario" name="nombreUsuario"
-									th:value="${nombreUsuario}" disabled>
-							</div>
-							<input type="hidden" name="idUsuario" th:value="${idUsuario}" />
-							<div class="form-group">
-								<label for="incidenciaTitulo">Título</label>
-								<input type="text" class="form-control" id="incidenciaTitulo" name="titulo" required>
-							</div>
-							<div class="form-group">
-								<label for="incidenciaDescripcion">Descripción</label>
-								<textarea class="form-control" id="incidenciaDescripcion" name="descripcion"
-									required></textarea>
-							</div>
-							<label for="incidenciaEquipo">Equipo</label>
-							<select class="form-control" id="incidenciaEquipo" name="equipo">
-								<!-- Las opciones se cargarán aquí -->
-							</select>
-							<div class="form-group">
-								<label for="incidenciaUbicacion">Ubicación</label>
-								<select class="form-control" id="incidenciaUbicacion" name="ubicacion">
-									<option>Edificio-A</option>
-									<option>Edificio-B</option>
-									<option>Edificio-C</option>
+
+
+			<h2>Registro de Incidencias</h2>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Descripción</th>
+						<th>Usuario</th>
+						<th>Estado</th>
+						<th>Equipo</th>
+						<th>Fecha</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="incidencia : ${incidencias}">
+						<td style="color: #f58220;" th:text="${incidencia.idIncidencia}">1</td>
+						<td th:text="${incidencia.descripcion}">Error en el sistema de facturación</td>
+						<td th:text="${incidencia.nombreUsuario}">Nadia</td>
+						<td><span class="badge bg-warning text-dark" th:text="${incidencia.estado}">Pendiente</span>
+						</td>
+						<td th:text="${incidencia.marcaEquipo} + ' ' + ${incidencia.modeloEquipo}">Marca Modelo</td>
+						<td th:text="${incidencia.fechaHoraAsignacion}"></td>
+				</tbody>
+			</table>
+			<!-- Modal Nueva Incidencia -->
+			<div class="modal fade" id="nuevaIncidenciaModal" tabindex="-1" aria-labelledby="modalLabel"
+				aria-hidden="true">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="modalLabel">Nueva Incidencia</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<!-- Formulario para nueva incidencia -->
+							<form id="formNuevaIncidencia" method="post" action="/agregarIncidencia">
+								<div class="form-group">
+									<label for="nombreUsuario">Usuario</label>
+									<input type="text" class="form-control" id="nombreUsuario" name="nombreUsuario"
+										th:value="${nombreUsuario}" disabled>
+								</div>
+								<input type="hidden" name="idUsuario" th:value="${idUsuario}" />
+								<div class="form-group">
+									<label for="incidenciaTitulo">Título</label>
+									<input type="text" class="form-control" id="incidenciaTitulo" name="titulo"
+										required>
+								</div>
+								<div class="form-group">
+									<label for="incidenciaDescripcion">Descripción</label>
+									<textarea class="form-control" id="incidenciaDescripcion" name="descripcion"
+										required></textarea>
+								</div>
+								<label for="incidenciaEquipo">Equipo</label>
+								<select class="form-control" id="incidenciaEquipo" name="equipo">
+									<!-- Las opciones se cargarán aquí -->
 								</select>
-							</div>
-							<div class="form-group">
-								<label for="incidenciaFechaCreacion">Fecha de Creación</label>
-								<input type="text" class="form-control" id="incidenciaFechaCreacion"
-									name="fechaCreacion" readonly>
-							</div>
-							<div class="form-group">
-								<label for="incidenciaPrioridad">Prioridad</label>
-								<select class="form-control" id="incidenciaPrioridad" name="prioridad">
-									<option>Baja</option>
-									<option>Media</option>
-									<option>Alta</option>
-								</select>
-							</div>
-							<!-- El estado se establecerá automáticamente a "Pendiente", por lo que no es necesario un campo de entrada aquí -->
-						</form>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-						<button type="submit" form="formNuevaIncidencia" class="btn btn-primary">Guardar
-							Incidencia</button>
+								<div class="form-group">
+									<label for="incidenciaUbicacion">Ubicación</label>
+									<select class="form-control" id="incidenciaUbicacion" name="ubicacion">
+										<option>Edificio-A</option>
+										<option>Edificio-B</option>
+										<option>Edificio-C</option>
+									</select>
+								</div>
+								<div class="form-group">
+									<label for="incidenciaFechaCreacion">Fecha de Creación</label>
+									<input type="text" class="form-control" id="incidenciaFechaCreacion"
+										name="fechaCreacion" readonly>
+								</div>
+								<div class="form-group">
+									<label for="incidenciaPrioridad">Prioridad</label>
+									<select class="form-control" id="incidenciaPrioridad" name="prioridad">
+										<option>Baja</option>
+										<option>Media</option>
+										<option>Alta</option>
+									</select>
+								</div>
+								<!-- El estado se establecerá automáticamente a "Pendiente", por lo que no es necesario un campo de entrada aquí -->
+							</form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+							<button type="submit" form="formNuevaIncidencia" class="btn btn-primary">Guardar
+								Incidencia</button>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>	
-	
+
 
 </body>
 

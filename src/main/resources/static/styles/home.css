@@ -10,6 +10,8 @@
 body {
     background-color: #f0f0f0;
     font-family: Arial, sans-serif;
+}.row {
+	display: contents !important;
 }
 
 /* Navegación */
@@ -69,6 +71,16 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     max-width: 400px; /* Ajusta el ancho máximo según tus necesidades */
+}
+
+.modal-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal {
+    overflow-y: auto;
 }
 
 /* Responsividad */

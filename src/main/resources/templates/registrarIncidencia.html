@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Registrar Incidencia - QRInside</title>
+	<link th:href="@{/bootstrap/4.3.1/css/bootstrap.min.css}" rel="stylesheet">
+	<link th:href="@{/styles/home.css}" rel="stylesheet">
+	<link th:src="@{/js/incidencias.js}" rel="stylesheet">
+	<script src="./js/jquery-3.6.1.min.js"></script>
+	<script src="./bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+	<meta name="_csrf" th:content="${_csrf.token}"/>
+	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+
+<body>
+	<div th:replace="~{fragments/menu :: navbar}"></div>
+
+	<div class="container mt-5">
+		<h2 class="text-center">Registrar Incidencia</h2>		
+	</div>
+
+	
+</body>
+</html>

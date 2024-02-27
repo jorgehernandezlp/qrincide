@@ -340,16 +340,19 @@ public class MySqlConnection {
 	    try {
 	        this._initializeError();
 	        if (this.connection != null && !this.connection.isClosed()) {
-	            // Definir la sentencia SQL de borrado
-	            String sqlDeleteUser = "DELETE FROM usuarios WHERE id_usuario = ?";
-	            
-	            // Preparar la sentencia con el SQL
-	            PreparedStatement statement = this.connection.prepareStatement(sqlDeleteUser);
-	            // Establecer el idUsuario en la sentencia preparada
-	            statement.setInt(1, idUsuario);
+	            // Definir la sentencia SQL para eliminar todas las incidencias relacionadas con el usuario
+	            String sqlDeleteIncidencias = "DELETE FROM incidencias WHERE ID_Usuario = ?";
+	            System.out.println("Query SQL para eliminar incidencias relacionadas: " + sqlDeleteIncidencias); // Imprimir consulta SQL
+	            PreparedStatement statementIncidencias = this.connection.prepareStatement(sqlDeleteIncidencias);
+	            statementIncidencias.setInt(1, idUsuario);
+	            numRowsAffected = statementIncidencias.executeUpdate();
 
-	            // Ejecutar la actualización
-	            numRowsAffected = statement.executeUpdate();
+	            // Luego de eliminar las incidencias, procedemos a borrar el usuario
+	            String sqlDeleteUser = "DELETE FROM usuarios WHERE id_usuario = ?";
+	            System.out.println("Query SQL para eliminar usuario: " + sqlDeleteUser); // Imprimir consulta SQL
+	            PreparedStatement statementUser = this.connection.prepareStatement(sqlDeleteUser);
+	            statementUser.setInt(1, idUsuario);
+	            numRowsAffected += statementUser.executeUpdate(); // Agregar el número de filas afectadas a las incidencias eliminadas
 	        } else {
 	            this.flagError = true;
 	            this.msgError = "Error en deleteUserById. +Info: Conexión no disponible.";
@@ -369,6 +372,7 @@ public class MySqlConnection {
 
 	    return numRowsAffected;
 	}
+	
 	public int deleteEquipoById(int idEquipo) {
 	    int numRowsAffected = 0;
 	    try {
