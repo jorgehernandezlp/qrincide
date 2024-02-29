@@ -23,7 +23,7 @@
 		<div class="row mt-4">
 			<div class="col-md-6">
 				<div class="alert alert-info" role="alert">
-					<a href="#" role="button">Ver Historial de Incidencias</a>
+					<a th:href="@{/historial}" role="button">Ver Historial de Incidencias</a>
 				</div>
 			</div>
 			<div class="col-md-6">
@@ -50,7 +50,13 @@
 						<td style="color: #f58220;" th:text="${incidencia.idIncidencia}">1</td>
 						<td th:text="${incidencia.descripcion}">Error en el sistema de facturación</td>
 						<td th:text="${incidencia.nombreUsuario}">Nadia</td>
-						<td><span class="badge bg-warning text-dark" th:text="${incidencia.estado}">Pendiente</span>
+						<td>
+							<span th:if="${incidencia.estado == 'En Proceso'}" class="badge bg-success text-white"
+								th:text="${incidencia.estado}">Estado</span>
+							<span th:if="${incidencia.estado == 'Pendiente'}" class="badge bg-warning text-dark"
+								th:text="${incidencia.estado}">Estado</span>
+							<span th:if="${incidencia.estado != 'En Proceso' and incidencia.estado != 'Pendiente'}"
+								class="badge bg-secondary text-white" th:text="${incidencia.estado}">Estado</span>
 						</td>
 						<td th:text="${incidencia.marcaEquipo} + ' ' + ${incidencia.modeloEquipo}">Marca Modelo</td>
 						<td th:text="${incidencia.fechaHoraAsignacion}"></td>

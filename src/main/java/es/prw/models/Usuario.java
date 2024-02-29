@@ -61,7 +61,6 @@ public class Usuario {
         this.contraseña = contraseña;
     }
 
-    // Considera sobrescribir el método toString() si necesitas una representación en String de tus usuarios
     @Override
     public String toString() {
         return "Usuario{" +

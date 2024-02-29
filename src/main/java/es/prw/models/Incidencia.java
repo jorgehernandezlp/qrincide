@@ -136,8 +136,7 @@ public class Incidencia {
         this.fechaHoraAsignacion = rs.getDate("FechaHoraAsignación");
         this.fechaHoraResolucion = rs.getDate("FechaHoraResolución");
         this.estado = rs.getString("Estado");
-        this.prioridad = rs.getString("Prioridad");
-        // Asumiendo que las columnas de usuario y equipo están presentes en el ResultSet
+        this.prioridad = rs.getString("Prioridad");        
         this.nombreUsuario = rs.getString("UsuarioNombre");
         this.marcaEquipo = rs.getString("EquipoMarca");
         this.modeloEquipo = rs.getString("EquipoModelo");

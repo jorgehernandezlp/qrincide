@@ -1,6 +1,6 @@
 body, html {
     height: 100%;
-    background-color: #000; /* Fondo negro */
+    background-color: #000; 
 }
 
 .sidenav {    
@@ -12,25 +12,26 @@ body, html {
 .login-main-text {
     margin-top: 20%;
     padding: 60px;
-    color: #fff; /* Texto blanco */
+    color: #fff; 
 }
 
 
 
 .btn-dark {
-    background-color: #000; /* Botón negro */
-    color: #fff; /* Texto blanco */
+    background-color: #000; 
+    color: #fff; 
 }
 
 .btn-secondary {
-    background-color: #f58220; /* Botón naranja */
-    color: #fff; /* Texto blanco */
+    background-color: #f58220; 
+    color: #fff; 
 }
 
+/* Fondo ligeramente más claro que el negro para los inputs */
 .form-control {
-    background-color: #333; /* Fondo ligeramente más claro que el negro para los inputs */
-    color: #fff; /* Texto blanco */
-    border-color: #f58220; /* Borde naranja */
+    background-color: #333; 
+    color: #fff; 
+    border-color: #f58220;
 }
 
 .form-group label {

@@ -1,12 +1,8 @@
 
 
 // Función para inicializar el modal de edición con los datos del equipo
-function cargarEquipo(idEquipo) {
-	// Aquí deberías hacer una solicitud AJAX para obtener los datos del equipo por su ID
-	// y luego llenar los campos del formulario en el modal con estos datos.
-	// Por simplicidad, se omite la solicitud AJAX y se muestra solo la estructura básica.
-	console.log("Cargar datos del equipo con ID:", idEquipo);
-	// Ejemplo de cómo establecer valores (deberías reemplazarlos con los datos reales obtenidos)
+function cargarEquipo(idEquipo) {	
+	console.log("Cargar datos del equipo con ID:", idEquipo);	
 	$('#equipoId').val(idEquipo);
 	$('#equipoNombre').val("Nombre del Equipo");
 	$('#equipoDescripcion').val("Descripción del Equipo");
@@ -15,24 +11,17 @@ function cargarEquipo(idEquipo) {
 }
 
 // Función para mostrar el modal de confirmación de borrado
-function mostrarConfirmacionBorrado(idEquipo) {
-	// Guardar el ID del equipo en un lugar accesible
+function mostrarConfirmacionBorrado(idEquipo) {	
 	$('#confirmarBorradoBtn').data('idEquipo', idEquipo);
-	$('#confirmacionBorradoModal').modal('show');
-}
+	$('#confirmacionBorradoModal').modal('show');}
 
-// Agrega aquí tu JavaScript si es necesario
+
 function mostrarModalQR(idEquipo) {
-	// Lógica para generar y mostrar el código QR
-	console.log("Generar y mostrar QR para el equipo con ID:", idEquipo);
-	// Mostrar el modal
+	
+	console.log("Generar y mostrar QR para el equipo con ID:", idEquipo);	
 	$('#codigoQRModal').modal('show');
 }
 
-function descargarQR() {
-	// Lógica para descargar el código QR
-	console.log("Descargar el QR mostrado");
-}
 
 $(document).ready(function() {
 	// Manejar la confirmación de borrado
@@ -50,12 +39,11 @@ $(document).ready(function() {
 				xhr.setRequestHeader(header, token);
 			},
 			data: { idEquipo: idEquipo },
-			success: function(response) {
-				// Código para manejar la respuesta exitosa
+			success: function(response) {				
 				location.reload();
 			},
 			error: function(xhr, status, error) {
-				// Código para manejar la respuesta de error
+				
 				console.error("Error al borrar equipo:", error);
 				alert("Error al borrar usuario. Inténtelo de nuevo.");
 			}
@@ -63,8 +51,7 @@ $(document).ready(function() {
 		// Cerrar el modal de confirmación
 		$('#confirmacionBorradoModal').modal('hide');
 
-		// Opcionalmente, recargar la página o actualizar la tabla de equipos para reflejar el cambio
-		// location.reload();
+		
 	});
 
 	// Función para buscar equipos por nombre en la tabla
@@ -93,8 +80,7 @@ function generarYMostrarQR(idEquipo) {
 		colorLight: "#ffffff",
 		correctLevel: QRCode.CorrectLevel.H
 	});
-
-	// Actualizar el texto con la URL
+	
 	document.getElementById('qrUrl').textContent = urlDestino;
 	document.getElementById('openLinkBtn').href = urlDestino;
 	

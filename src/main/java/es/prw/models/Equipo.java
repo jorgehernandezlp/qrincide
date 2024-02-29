@@ -11,7 +11,7 @@ public class Equipo {
     private String descripcion;
     private String ubicacion;
 
-    // Constructor vacío
+    
     public Equipo() {
     }
 
@@ -26,7 +26,7 @@ public class Equipo {
             this.ubicacion = rs.getString("Ubicación");
         } catch (SQLException e) {
             e.printStackTrace();
-            // Considera manejar adecuadamente la excepción o re-lanzarla como una excepción no comprobada
+           
         }
     }
 

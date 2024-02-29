@@ -1,6 +1,6 @@
 
 $(document).ready(function() {
-    // Asegúrate de que el contenido principal se muestre al hacer clic en "Inicio"
+	    
     $("a.nav-link:contains('Inicio')").click(function(e) {
         e.preventDefault();
         $('#nuevaIncidenciaModal').modal('hide');
@@ -17,7 +17,7 @@ $(document).ready(function() {
         let fechaFormateada = horas + ":" + minutos + " - " + dia + "/" + mes + "/" + año;
         $('#incidenciaFechaCreacion').val(fechaFormateada);
         
-        cargarEquipos(); // Llama a la función cargarEquipos cuando se muestra el modal
+        cargarEquipos(); 
     });
 	// Función para cargar los equipos en el modal al realizar una incidencia
     function cargarEquipos() {
@@ -30,7 +30,7 @@ $(document).ready(function() {
                 var selectEquipo = document.getElementById('incidenciaEquipo');
                 selectEquipo.innerHTML = ''; // Limpia el select antes de agregar nuevas opciones
                 
-                // Añade una opción por defecto o placeholder
+               
                 var opcionDefault = document.createElement('option');
                 opcionDefault.value = '';
                 opcionDefault.textContent = 'Seleccione un equipo';
@@ -39,21 +39,20 @@ $(document).ready(function() {
                 // Añade cada equipo como una opción en el select
                 data.forEach(equipo => {
                     var opcion = document.createElement('option');
-                    opcion.value = equipo.idEquipo; // Considera usar el ID del equipo como su valor
+                    opcion.value = equipo.idEquipo; 
                     opcion.textContent = equipo.marca + ' ' + equipo.modelo; // Muestra marca y modelo como texto
                     selectEquipo.appendChild(opcion);
                 });
             })
             .catch(error => {
                 console.error('Error al cargar los equipos:', error);
-                // Manejo de errores, opcionalmente podrías mostrar un mensaje al usuario
+                
             });
     }
     
     // Controlador para el envío del formulario
     $('#formNuevaIncidencia').on('submit', function(e) {
-        e.preventDefault(); // Evita el envío del formulario de la manera tradicional
-        // Recolecta los datos del formulario
+        e.preventDefault(); // Evita el envío del formulario de la manera tradicional        
         var datosIncidencia = $(this).serialize();       
         // Obtiene el token CSRF y el nombre del encabezado de los metadatos
         var token = $('meta[name="_csrf"]').attr('content');
@@ -76,7 +75,7 @@ $(document).ready(function() {
             },
             error: function(error) {
                 console.error('Error al guardar la incidencia:', error);
-                // Mostrar mensaje de error al usuario, etc.
+               
             }
         });
     });

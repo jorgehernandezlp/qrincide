@@ -404,5 +404,48 @@ public class MySqlConnection {
 
 	    return numRowsAffected;
 	}
+	
+	public int updateEstadoIncidenciaById(int idIncidencia, String nuevoEstado) {
+	    int numRowsAffected = 0;
+	    PreparedStatement statement = null;
+	    try {
+	        this._initializeError();
+	        if (this.connection != null && !this.connection.isClosed()) {
+	            String sqlUpdateEstado = "UPDATE db_inside.incidencias SET Estado = ? WHERE ID_Incidencia = ?";        
+	            statement = this.connection.prepareStatement(sqlUpdateEstado);
+	            
+	            statement.setString(1, nuevoEstado); // Establecer el nuevo estado
+	            statement.setInt(2, idIncidencia); // Establecer el ID de la incidencia
+
+	            // Ejecutar la actualización
+	            numRowsAffected = statement.executeUpdate();
+	        } else {
+	            this.flagError = true;
+	            this.msgError = "Error en updateEstadoIncidenciaById. +Info: Conexión no disponible.";
+	        }
+	    } catch (SQLException ex) {
+	        this.flagError = true;
+	        this.msgError = "Error en updateEstadoIncidenciaById. +Info: " + ex.getMessage();
+	        try {
+	            if (this.connection != null && !this.connection.getAutoCommit()) {
+	                this.connection.rollback();
+	            }
+	        } catch (SQLException exRollback) {
+	            this.flagError = true;
+	            this.msgError += " Error en intento de rollback en updateEstadoIncidenciaById. +Info: " + exRollback.getMessage();
+	        }
+	    } finally {
+	        if (statement != null) {
+	            try {
+	                statement.close();
+	            } catch (SQLException ex) {
+	                this.flagError = true;
+	                this.msgError += " Error al cerrar PreparedStatement. +Info: " + ex.getMessage();
+	            }
+	        }
+	    }
+
+	    return numRowsAffected;
+	}
 
 }

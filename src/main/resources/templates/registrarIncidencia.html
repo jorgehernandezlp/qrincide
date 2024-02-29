@@ -7,21 +7,68 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Registrar Incidencia - QRInside</title>
 	<link th:href="@{/bootstrap/4.3.1/css/bootstrap.min.css}" rel="stylesheet">
-	<link th:href="@{/styles/home.css}" rel="stylesheet">
-	<link th:src="@{/js/incidencias.js}" rel="stylesheet">
+	<link th:href="@{/styles/home.css}" rel="stylesheet">	
 	<script src="./js/jquery-3.6.1.min.js"></script>
 	<script src="./bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 	<meta name="_csrf" th:content="${_csrf.token}"/>
-	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>	
+	<script th:src="@{/js/incidenciasExternas.js}"></script>
 </head>
 
 <body>
-	<div th:replace="~{fragments/menu :: navbar}"></div>
-
+	 <nav class="navbar navbar-expand-lg navbar-dark bg-dark" th:fragment="navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">QRInside</a>            
+        </div>
+    </nav>
 	<div class="container mt-5">
-		<h2 class="text-center">Registrar Incidencia</h2>		
-	</div>
-
+        <h2 class="text-center mb-4">Registrar Incidencia</h2>
+        <form>
+            <div class="form-group">
+                <label for="titulo">Título</label>
+                <input type="text" class="form-control" id="titulo" name="titulo" required>
+            </div>
+            <div class="form-group">
+                <label for="descripcion">Descripción</label>
+                <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="equipo">Equipo (ID)</label>
+                <input type="text" class="form-control" id="equipo" name="equipo" value="" required readonly>
+            </div>
+            <div class="form-group">
+                <label for="ubicacion">Ubicación</label>
+                <select class="form-control" id="ubicacion" name="ubicacion" required>
+                    <option value="">Seleccione una ubicación</option>
+                    	<option>Edificio-A</option>
+						<option>Edificio-B</option>
+						<option>Edificio-C</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="fechaCreacion">Fecha de Creación</label>
+                <input type="text" class="form-control" id="fechaCreacion" name="fechaCreacion" required readonly>
+            </div>
+            <div class="form-group">
+                <label for="prioridad">Prioridad</label>
+                <select class="form-control" id="prioridad" name="prioridad" required>
+                    <option value="">Seleccione una prioridad</option>
+                    	<option>Baja</option>
+						<option>Media</option>
+						<option>Alta</option>
+                </select>
+            </div>
+			<div class="form-group">
+				<label for="usuario">Usuario</label>
+				<input type="text" class="form-control" id="usuario" name="usuario" required>
+			</div>
+			<div class="form-group">
+				<label for="password">Contraseña</label>
+				<input type="password" class="form-control" id="password" name="password" required>
+			</div>
+            <button type="submit" class="btn btn-primary">Registrar</button>
+        </form>
+    </div>
 	
 </body>
 </html>
